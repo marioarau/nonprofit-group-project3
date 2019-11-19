@@ -5,8 +5,8 @@ import * as Yup from "yup";
 import axios from "axios";
 import { withRouter } from "react-router-dom";
 
-
 const ValidatedLoginForm = (props) => (
+ 
   <Formik
     initialValues={{ email: "", password: "" }}
     onSubmit={(values, { setSubmitting }) => {
@@ -16,7 +16,18 @@ const ValidatedLoginForm = (props) => (
         .then(() => {
           setSubmitting(false);
           props.history.push('/home')
-        })
+        }).catch(error => {
+          console.log("error.response: ", error.response)
+          //console.log(error.response.data)
+          if (error && error.response && error.response.data === "Unauthorized") {
+            console.log("Username or Password Incorrect!");
+            alert("Login Error: Username or Password incorrect!")
+           // this.setState({
+           //   LoginError: "username or password"
+          //  });
+          }
+        });
+
     }}
 
 
