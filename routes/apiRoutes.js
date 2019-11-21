@@ -15,6 +15,7 @@ module.exports = function (app) {
         res.redirect("/");
     });
 
+
     // post route for saving a favorite nonprofit for a user                            
     app.post("/api/update-favorite", function (req, res) {
 
@@ -60,9 +61,24 @@ module.exports = function (app) {
         });
 
     });
+
     // get route for getting favorites by userid
     // POSTMAN GET localhost:5000/api/get-user-favorites/userid/2
     app.get('/api/get-user-favorites/userid/:userid', function (req, res) {
+        console.log(req.params);
+        console.log("category: ", req.params.category);
+        qry = "SELECT `Favorites`.*,`Nonprofits`.*  FROM `Favorites`";
+        qry = qry + " JOIN `Nonprofits` ON `Favorites`.`NonprofitId` = `Nonprofits`.`id`";
+        qry = qry + "  WHERE Favorites.UserId = " + req.params.userid + " limit 5";
+        db.sequelize.query(qry).then(([results, metadata]) => {
+            console.log("sequelize join results: ", results)
+            res.json(results);
+        }).catch(function (err) {
+                res.status(500).send(err);
+        });
+    });
+    
+    /* app.get('/api/get-user-favorites/userid/:userid', function (req, res) {
 
         console.log('Entering get-user-favorites:', req.params);
         console.log("userId: ", req.params.userid);
@@ -76,7 +92,7 @@ module.exports = function (app) {
             res.status(500);
         });
     });
-
+*/
     // post route for saving a favorite nonprofit for a user                            
     app.post("/api/favorite", function (req, res) {
 
