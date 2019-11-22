@@ -8,19 +8,15 @@ class Buttons extends React.Component {
     }
     componentDidMount() {
         fetch('/api/get-categories')
+            .then(res => res.json())
+            .then((data) => {
+                this.setState({
+                    categories: data
+                })
 
-        //.then(res => res.text())          // convert to plain text
-        //.then(text => console.log(text))  // then log it out
-
-             .then(res => res.json())
-             .then((data) => {
-                 this.setState({
-                     categories: data
-                 })
-
-                 console.log("categories data: ", data);
-             })
-             .catch(err => console.error(err))
+                console.log("categories data: ", data);
+            })
+            .catch(err => console.error(err))
 
 
     }
@@ -28,9 +24,8 @@ class Buttons extends React.Component {
     handleClick = (event) => {
         console.log(event.target.value);
         const name = event.target.value;
-        console.log("handleClick: ", name);
         fetch(`/api/get-np-by-category/category/${name}`)
-        .then(res => res.json())
+            .then(res => res.json())
             .then((data) => {
                 this.props.setnonprofits(data);
                 console.log("data: ", data);

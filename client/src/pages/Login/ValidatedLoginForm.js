@@ -5,25 +5,28 @@ import * as Yup from "yup";
 import axios from "axios";
 import { withRouter } from "react-router-dom";
 
-const ValidatedLoginForm = (props) => {
-  const [pass_err,set_pass_err] = React.useState(false);
-  return ( 
+const ValidatedLoginForm = (props) => (
+ 
   <Formik
     initialValues={{ email: "", password: "" }}
     onSubmit={(values, { setSubmitting }) => {
       console.log("Loging in ...", values);
       console.log("props.history: " + props.history);
-      set_pass_err(true);
       axios.post("/api/login", values)
-        .then(() => {
+        .then((res) => {
+          console.log('login res',res)
+          props.updateValue(res['data'])
           setSubmitting(false);
-          props.history.push('/home')
+          props.history.push('/home');
         }).catch(error => {
           console.log("error.response: ", error.response)
           //console.log(error.response.data)
           if (error && error.response && error.response.data === "Unauthorized") {
             console.log("Username or Password Incorrect!");
-            //alert("Login Error: Username or Password incorrect!")
+            alert("Login Error: Username or Password incorrect!")
+           // this.setState({
+           //   LoginError: "username or password"
+          //  });
           }
         });
 
@@ -78,13 +81,12 @@ const ValidatedLoginForm = (props) => {
           {errors.password && touched.password && (
             <div className="input-feedback">{errors.password}</div>
           )}
-          {(pass_err) ? <span className="login-error"><p>Incorrect Email or Password Entered!</p></span> : null}
           <button type="submit" href="/home" onClick={handleSubmit}>Submit</button>
         </form>
       );
     }}
   </Formik>
-)};
+);
 
 export default withRouter(ValidatedLoginForm);
 //export default ValidatedLoginForm;

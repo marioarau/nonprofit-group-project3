@@ -3,24 +3,29 @@ import React from "react";
 import Modal from 'react-modal';
 import "./style.css";
 import Axios from "axios";
+import userContext from "../../userContext";
 
-export function NonprofitList({ nonprofits }) {
+export function NonprofitList(props) {
+   
   return (
-    <ul className="list-group">{nonprofits.map(item => {
-      return (<NonprofitListItem item={item} key={item.id} />)
+    <ul className="list-group">{props.nonprofits.map(item => {
+      return (<NonprofitListItem showAction={props.showAction} item={item} key={item.id} />)
     })
     }</ul>
   );
 };
 
-export function NonprofitListItem({ item }) {
+export function NonprofitListItem(props) {
+  const myUser = React.useContext(userContext);
+
   const [modalIsOpen, setIsOpen] = React.useState(false);
   const [JobModalId, JobId] = React.useState("");
+  const [userid] = React.useState(myUser.id);
   const [modalForm, setModalForm] = React.useState({
     donationAmount: "",
   })
 
-  if (!item) {
+  if (!props.item) {
     return null;
   }
   var subtitle;
@@ -34,8 +39,8 @@ export function NonprofitListItem({ item }) {
     url,
     clickEvent,
     NonprofitId
-  } = item;
-  console.log("NonprofitListItem item: ", item);
+  } = props.item;
+  console.log("NonprofitListItem item: ", props.item);
   const customStyles = {
     content: {
       top: '50%',
@@ -62,15 +67,16 @@ export function NonprofitListItem({ item }) {
     setIsOpen(false);
   }
 
-  var handleFavoriteSubmit = (event) => {
-    event.preventDefault()
-    console.log(event);
+  function handleFavoriteSubmit(event , id)  {
+    
+    console.log('userid' , userid);
     console.log('Nonprofit Id: ', JobModalId)
     console.log("Donation Amount: ", modalForm.donationAmount)
     const values = {
-      NonprofitId: JobModalId,
-      UserId: 2,
-      donationAmt: modalForm.donationAmount
+      
+      NonprofitId: id,
+      UserId: userid,
+      donationAmt: 0
     }
     Axios.post('/api/favorite', values)
       .then(() => {
@@ -109,32 +115,31 @@ export function NonprofitListItem({ item }) {
   return (
     <div>
       <li className="list-group-item m-2">
-
-        <div className="float-right">
-          {!NonprofitId ? (
-            <button
-              className="btn btn-success"
-              onClick={event => openModal(item, id)} >Save
-            </button>
-          ) : (
+      {/* <button
+                className="btn btn-success"
+                onClick={event => openModal(props.item, id)} >Save
+              </button> */}
+         <div className="float-right">
+        {(props.showAction)?
+            <React.Fragment>
               <button
-                className="btn btn-primary"
-                onClick={event => clickEvent(event, id)}>Edit
-              </button>
+              className="btn btn-primary"
+              onClick={event => clickEvent(event, id)}>Edit
+            </button>
 
-              )
-          }
-          {NonprofitId ? (
             <button
             id="delete"
             className="btn btn-danger ml-2 mr-2"
-            onClick={event => DeleteFavorite(item, id)}>Delete
+            onClick={event => DeleteFavorite(props.item, id)}>Delete
           </button>
-          ) : (
-              ""
-              )
-          }
-        </div>
+            </React.Fragment>
+        :  
+        <button
+          className="btn btn-success"
+          onClick={event => handleFavoriteSubmit(props.item, id)} >Save
+        </button>
+      }
+      </div>
 
         <h4 className="font-weight-bold">{orgName}</h4>
 
@@ -173,5 +178,4 @@ export function NonprofitListItem({ item }) {
 
   )
 }
-
 
