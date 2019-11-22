@@ -1,21 +1,17 @@
 import React from "react";
 import {
-    BrowserRouter as Router,
-    Switch,
-    Route,
-    Link,
     NavLink
   } from "react-router-dom";
   import UserContext from "../../userContext";
 function Nav(props) {
     const myUser = React.useContext(UserContext);
-  console.log("myUser nav:", myUser);
-  if(myUser.id == undefined){
-      console.log('not logged in')
+
+  if(myUser.id === undefined){
+      //console.log('not logged in')
     //   props.history.push('/login')
   }
     return (
-        (myUser.id != undefined) ? 
+        (myUser.id !== undefined) ? 
         <ul className="nav justify-content-end">
             <li className="nav-item">
                 {/* <a className="nav-link active" href="/home">Home</a> */}

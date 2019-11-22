@@ -1,7 +1,8 @@
 import React from "react";
+import UserContext from "../../userContext";
 
 class Buttons extends React.Component {
-
+    static contextType = UserContext
     state = {
         nonprofits: [],
         categories: []
@@ -13,8 +14,6 @@ class Buttons extends React.Component {
                 this.setState({
                     categories: data
                 })
-
-                console.log("categories data: ", data);
             })
             .catch(err => console.error(err))
 
@@ -22,13 +21,13 @@ class Buttons extends React.Component {
     }
 
     handleClick = (event) => {
-        console.log(event.target.value);
+        const myUser = this.context
         const name = event.target.value;
-        fetch(`/api/get-np-by-category/category/${name}`)
+
+        fetch(`/api/get-np-by-category/category/${name}/`+ myUser.id)
             .then(res => res.json())
             .then((data) => {
                 this.props.setnonprofits(data);
-                console.log("data: ", data);
             })
             .catch(err => console.error(err))
     }

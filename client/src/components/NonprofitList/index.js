@@ -36,11 +36,9 @@ export function NonprofitListItem(props) {
     state,
     zip,
     orgFocus,
-    url,
-    clickEvent,
-    NonprofitId
+    url
   } = props.item;
-  console.log("NonprofitListItem item: ", props.item);
+  
   const customStyles = {
     content: {
       top: '50%',
@@ -53,8 +51,12 @@ export function NonprofitListItem(props) {
   };
 
   function openModal(item, id) {
+    setModalForm({
+      ...modalForm,
+      donationAmount: item.donationAmt
+    })
+    
     setIsOpen(true);
-    //console.log('address' , item.address);
     JobId(id);
   }
 
@@ -69,9 +71,6 @@ export function NonprofitListItem(props) {
 
   function handleFavoriteSubmit(event , id)  {
     
-    console.log('userid' , userid);
-    console.log('Nonprofit Id: ', JobModalId)
-    console.log("Donation Amount: ", modalForm.donationAmount)
     const values = {
       
       NonprofitId: id,
@@ -79,6 +78,25 @@ export function NonprofitListItem(props) {
       donationAmt: 0
     }
     Axios.post('/api/favorite', values)
+      .then(() => {
+        setIsOpen(false);
+        setModalForm({
+          ...modalForm,
+          donationAmount: ""
+        })
+      }).catch(error => {
+        console.log("error.response: ", error.response)
+      })
+  }
+  
+  var handleUpdateFavoriteDonation = (event) => {
+    event.preventDefault()
+    const values = {
+      NonprofitId: JobModalId,
+      UserId: userid,
+      donationAmt: modalForm.donationAmount
+    }
+    Axios.post('/api/update-favorite', values)
       .then(() => {
         setIsOpen(false);
         setModalForm({
@@ -100,10 +118,9 @@ export function NonprofitListItem(props) {
   }
 
 
-  var DeleteFavorite = (item, id) => {
-    console.log("id: ", id);
-    console.log("deleteFavorite item.id: ", item.id);
-    var favoriteId = 1; //item.id;
+  var DeleteFavorite = (item) => {
+
+    var favoriteId = item.fav_id; //item.id;
     Axios.get('/api/delete-favorite/favoriteId/' + favoriteId)
       .then(() => {
 
@@ -124,7 +141,7 @@ export function NonprofitListItem(props) {
             <React.Fragment>
               <button
               className="btn btn-primary"
-              onClick={event => clickEvent(event, id)}>Edit
+              onClick={event => openModal(props.item, id)}>Edit
             </button>
 
             <button
@@ -158,10 +175,10 @@ export function NonprofitListItem(props) {
         style={customStyles}
         contentLabel="This is Modal">
 
-        <a className="closeButton" onClick={closeModal}>X</a>
+        <a href='#' className="closeButton" onClick={closeModal}>X</a>
         <h2 ref={_subtitle => (subtitle = _subtitle)}>Donation Amount </h2>
 
-        <form onSubmit={handleFavoriteSubmit}>
+        <form onSubmit={handleUpdateFavoriteDonation}>
           <input name="NonprofitId" type="hidden" value={`JobModalId`} />
           <input
             name="donationAmt"

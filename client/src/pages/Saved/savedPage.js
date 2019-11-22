@@ -1,39 +1,34 @@
 import React from "react";
 import axios from "axios"
-import userContext from "../../userContext";
-import { NonprofitListItem, NonprofitList } from "../../components/NonprofitList";
+import UserContext from "../../userContext";
+import { NonprofitList } from "../../components/NonprofitList";
 
 class Saved extends React.Component {
-
+    static contextType = UserContext
     constructor(props)
     {  
-        //let value = this.userContext;
-        //console.log(value);
-        super(props);  
-        
+        super(props); 
         this.state = { nonprofits : [] , isLoading: true} 
     }  
 
 
     componentDidMount() {
-        this.getSavedNonprofits();
+        const myUser = this.context
+        this.getSavedNonprofits(myUser.id);
     }
 
-     getSavedNonprofits = () => {
+     getSavedNonprofits = (UserId) => {
 
-        axios.get('/api/get-user-favorites/userid/2')
+        axios.get('/api/get-user-favorites/userid/'+UserId)
        
         .then(res => {
-            console.log('save res',res)
+
             let resData = res.data
             this.setState(prevState => ({
                 nonprofits : resData    // like push but without mutation
             }));
-            console.log(res.data);
             //this.setState({ nonprofits: res.data })
         }).catch(err => console.log(err));
-          
-            console.log(this.state);
     };
 
     handleDelete = id => {
@@ -43,7 +38,6 @@ class Saved extends React.Component {
     };
 
     render() {
-        console.log('render log',this.state.nonprofits)
         return (
             <li className="list-group-item m-2">
 
