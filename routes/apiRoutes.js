@@ -15,7 +15,6 @@ module.exports = function (app) {
         res.redirect("/");
     });
 
-
     // post route for saving a favorite nonprofit for a user                            
     app.post("/api/update-favorite", function (req, res) {
 
@@ -62,14 +61,13 @@ module.exports = function (app) {
 
     });
 
-    // get route for getting favorites by userid
-    // POSTMAN GET localhost:5000/api/get-user-favorites/userid/2
+
     app.get('/api/get-user-favorites/userid/:userid', function (req, res) {
         console.log(req.params);
         console.log("category: ", req.params.category);
-        qry = "SELECT `Favorites`.*,`Nonprofits`.*  FROM `Favorites`";
+        qry = "SELECT `Favorites`.*, `Favorites`.id as fav_id, `Nonprofits`.*  FROM `Favorites`";
         qry = qry + " JOIN `Nonprofits` ON `Favorites`.`NonprofitId` = `Nonprofits`.`id`";
-        qry = qry + "  WHERE Favorites.UserId = " + req.params.userid + " limit 5";
+        qry = qry + "  WHERE Favorites.UserId = " + req.params.userid + " GROUP BY `Favorites`.NonprofitId limit 5";
         db.sequelize.query(qry).then(([results, metadata]) => {
             console.log("sequelize join results: ", results)
             res.json(results);
@@ -77,47 +75,22 @@ module.exports = function (app) {
                 res.status(500).send(err);
         });
     });
-    
-    /* app.get('/api/get-user-favorites/userid/:userid', function (req, res) {
 
-        console.log('Entering get-user-favorites:', req.params);
-        console.log("userId: ", req.params.userid);
-        db.Favorites.findAll({
-            where: {
-                UserId: req.params.userid
-            }
-        }).then(function (results) {
-            res.json(results);
-        }).catch(function (err) {
-            res.status(500);
-        });
-    });
-*/
-    // post route for saving a favorite nonprofit for a user                            
+    // post route for creating a new favorites
     app.post("/api/favorite", function (req, res) {
-
-        console.log('Entering Create Favorite:', req.body);
-        // create() requires an object describing the new data we're adding to table
-        console.log('donationAmt:', req.body.donationAmt);
-        console.log('UserId:', req.body.userId);
-        console.log('donNonprofitIdationAmt:', req.body.nonprofitId);
-        db.Favorites.create({
-            donationAmt: req.body.donationAmt,
-            NonprofitId: req.body.NonprofitId,
-            UserId: req.user.id
-        }).then(function (results) {
-            //res.json(results);
-            res.sendStatus(200)
-        }).catch(function (err) {
-            res.status(500);
-        });
+            db.Favorites.create({
+                donationAmt: req.body.donationAmt,
+                NonprofitId: req.body.NonprofitId,
+                UserId: req.body.UserId
+            }).then(function (results) {
+                // res.json(results);
+                res.sendStatus(200)
+            })
     });
-
 
     // get route for getting (nonprofit) categories
     // POSTMAN localhost:5000/api/get-np-by-category/category/Youth Services
     app.get('/api/get-categories', function (req, res) {
-
         db.Category.findAll()
             .then(function (results) {
                 res.json(results);
@@ -127,15 +100,17 @@ module.exports = function (app) {
             });
     });
 
+
     // get route for getting nonprofits by category
     // POSTMAN localhost:5000/api/get-np-by-category/category/Youth Services
-    app.get('/api/get-np-by-category/category/:category', function (req, res) {
+    app.get('/api/get-np-by-category/category/:category/:userid', function (req, res) {
 
         console.log(req.params);
         console.log("category: ", req.params.category);
-        qry = "SELECT `Nonprofits`.*,`Favorites`.`NonprofitId`,`Favorites`.`donationAmt`  FROM `Nonprofits`";
-        qry = qry + " LEFT JOIN `Favorites` ON `Nonprofits`.`id` = `Favorites`.`NonprofitId`";
-        qry = qry + "  WHERE orgFocus LIKE '%" + req.params.category + "%' limit 5";
+        
+        qry = "SELECT `Nonprofits`.* FROM `Nonprofits`";
+        qry = qry + " WHERE id NOT IN(SELECT Favorites.NonprofitId FROM Favorites WHERE UserId = "+ req.params.userid +")";
+        qry = qry + " AND orgFocus LIKE '%" + req.params.category + "%' limit 5";
         db.sequelize.query(qry).then(([results, metadata]) => {
             console.log("sequelize left join results: ", results)
             res.json(results);
@@ -176,6 +151,9 @@ module.exports = function (app) {
     });
 
 
+
+
+    
     // post route for saving a new unit to database
     app.post("/api/create-user", function (req, res) {
 
@@ -201,12 +179,14 @@ module.exports = function (app) {
 
     app.post("/api/login", passport.authenticate("local"), function (req, res) {
         console.log("/api/login called");
+        console.log('user det 1',req.user)
         res.json(req.user);
     });
 
     // get route to authenticate a user login
     app.get('/api/login', function (req, res) {
         console.log("/api/login get called");
+        console.log('user det',req.user)
         res.json(req.user);
     });
 
