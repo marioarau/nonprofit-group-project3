@@ -11,12 +11,16 @@ passport.use(new LocalStrategy(
   },
   function(email, password, done) {
     console.log("entering passport use function with localStrategy");
+    console.log("email: "+email+" password: "+password);
     // When a user tries to sign in this code runs
     db.User.findOne({
       where: {
         email: email
       }
     }).then(function(dbUser) {
+      console.log("password: ", password)
+      var validPassword = dbUser.validPassword(password);
+      console.log("validPassword: ", validPassword)
       // If there's no user with the given email
       if (!dbUser) {
         console.log("Incorrect email.");

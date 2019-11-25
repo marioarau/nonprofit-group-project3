@@ -37,7 +37,7 @@ class Buttons extends React.Component {
         return (
 
             <div className="jumbotron">
-                <h3 className="display-4">Please choose a category of interest</h3>
+                <h3 className="display-5">Please choose a category of interest</h3>
                 { this.state.categories.map(item => {
                     return <button key={item.name} value={item.name} name={item.name} onClick={this.handleClick}>{item.name}</button>
                 })

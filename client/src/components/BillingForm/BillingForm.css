@@ -1,0 +1,30 @@
+.header {
+    font-weight: bold;
+}
+
+#name {
+    margin-left: 170px;
+    width: 60%;
+}
+
+#cc {
+    width: 60%;
+}
+
+#date {
+    margin-left: 170px;
+    width: 60%;
+}
+
+#cvc {
+    width: 30%;
+}
+
+#check {
+    margin-right: 50px;
+}
+
+#donate {
+    margin-top: 20px;
+    margin-bottom: 30px;
+}

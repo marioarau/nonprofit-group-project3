@@ -5,10 +5,14 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Nav from "./components/Nav";
 import Home from "./pages/Home";
+import Donate from "./pages/Donate";
 import Saved from "./pages/Saved";
 import userContext from "./userContext";
+import Footer from "./components/Footer"
+//import axios from "axios"
 
 function App() {
+  const [user, setUser] = React.useState(false);
   const [userDetails, setUserDetails] = React.useState({});
 
   // React.useEffect(() =>  {
@@ -56,6 +60,7 @@ function App() {
           <Route exact path="/" component={Landing} />
           <Route exact path="/register" component={Register} />
           <Route exact path="/login" component={() => <Login updateValue={setUserDetailsfn} /> } />
+          <Route exact path="/donate" component={Donate} />
         </Switch>
         </userContext.Provider>
       </div>

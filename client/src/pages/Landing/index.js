@@ -1,5 +1,5 @@
 import React from "react";
-import "./styles.css";
+import "./LandingPage.css";
 import LandingPage from "./LandingPage";
 
 function App() {
@@ -9,5 +9,6 @@ function App() {
     </div>
   );
 }
+
 
 export default App;

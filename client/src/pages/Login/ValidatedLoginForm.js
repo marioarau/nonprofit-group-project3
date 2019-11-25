@@ -12,6 +12,7 @@ const ValidatedLoginForm = (props) => (
     onSubmit={(values, { setSubmitting }) => {
       axios.post("/api/login", values)
         .then((res) => {
+          console.log("res[data]: ",res['data']);
           props.updateValue(res['data'])
           setSubmitting(false);
           props.history.push('/home');

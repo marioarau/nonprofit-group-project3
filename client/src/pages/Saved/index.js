@@ -1,7 +1,7 @@
 import React from "react";
-import "./styles.css";
 import SavedPage from "./savedPage";
-import UserContext from "../../userContext";
+import "./SavedPage.css";
+import UserContext from "../../userContext"
 
 function SavedFav(props) {
 

@@ -1,0 +1,15 @@
+.header {
+  margin-top: 30px;
+  margin-bottom: 30px;
+  font-weight: bold;
+}
+
+.card-title {
+  margin-bottom: 30px;
+  font-weight: bold;
+}
+
+.input-group {
+  margin-left: 35%;
+  width: 30%;
+}

@@ -6,7 +6,6 @@ var express = require("express");
 var session = require("express-session");
 // Requiring passport as we've configured it
 var passport = require("./config/passport");
-const htmlRoutes = require("./routes/htmlRoutes");
 const apiRoutes = require("./routes/apiRoutes");
 
 //const cookieParser = require('cookie-parser') ;
@@ -32,7 +31,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 apiRoutes(app);
-htmlRoutes(app);
 app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
 });
